@@ -63,7 +63,7 @@ LOGGING_SERVICE = "gavrilov_bot"
 APPRISE_CONFIG_PATH = "settings/apprise.yml"
 
 # Настройка БД
-RECREATE_DB = True  # удаляем ли старые таблицы при запуске бота (обновляем структуры таблицы, но теряем данные)
+RECREATE_DB = False  # удаляем ли старые таблицы при запуске бота (обновляем структуры таблицы, но теряем данные)
 DB_TYPE = 'POSTGRE'
 #DB_TYPE = 'SQLite3'
 
