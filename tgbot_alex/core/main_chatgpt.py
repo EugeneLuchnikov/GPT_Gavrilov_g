@@ -1,17 +1,25 @@
-import asyncio
-import sys
-from typing import Any, Dict, List
-from dbase.models import History
-from logger.logger import logger
-from config import ROOT_DIR, SETTINGS_PATH, FAISS_DB_DIR, SYSTEM_PROMPT_FILE, USER_PROMPT_FILE, MODEL, TEMPERATURE, \
-    MAX_TOKENS_FOR_REQUEST, MAX_TOKENS_FOR_ANSWER, TELEGRAM_MAX_MESSAGE_LENGTH
-from create_bot import OPENAI_API_KEY
-from langchain_community.embeddings.openai import OpenAIEmbeddings
-from langchain_community.vectorstores import FAISS
-from openai import AsyncOpenAI
-import tiktoken
 import re
 import os
+import sys
+import asyncio
+import tiktoken
+from typing import Any, Dict, List
+from openai import AsyncOpenAI
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings.openai import OpenAIEmbeddings
+
+from config import (
+    ROOT_DIR, 
+    SETTINGS_PATH, 
+    FAISS_DB_DIR, 
+    SYSTEM_PROMPT_FILE, 
+    USER_PROMPT_FILE, 
+    MODEL, TEMPERATURE, 
+    TELEGRAM_MAX_MESSAGE_LENGTH,
+)
+from create_bot import OPENAI_API_KEY
+from dbase.models import History
+from logger.logger import logger
 
 
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
@@ -126,7 +134,7 @@ class WorkerOpenAI:
     # https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb
     def num_tokens_from_messages(self, messages: List[Dict[str, str]]) -> int:
         """Return the number of tokens used by a list of messages."""
-        model = self.model
+        model = self.model.name
         try:
             encoding = tiktoken.encoding_for_model(model)
         except KeyError:
@@ -147,10 +155,10 @@ class WorkerOpenAI:
             tokens_per_message = 4  # every message follows <|start|>{role/name}\n{content}<|end|>\n
             tokens_per_name = -1  # if there's a name, the role is omitted
         elif "gpt-3.5-turbo" in model:
-            print("Warning: gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-1106.")
+            logger.warning("Warning: gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-1106.")
             return self.num_tokens_from_messages(messages)
         elif "gpt-4" in model:
-            print("Warning: gpt-4 may update over time. Returning num tokens assuming gpt-4-0613.")
+            logger.warning("Warning: gpt-4 may update over time. Returning num tokens assuming gpt-4-0613.")
             return self.num_tokens_from_messages(messages)
         else:
             raise NotImplementedError(
@@ -174,7 +182,7 @@ class WorkerOpenAI:
             [f'\n==  ' + doc.page_content + '\n' for i, doc in enumerate(docs)]))
         
         system_prompt = self.chat_manager_system.format(
-            max_tokens = MAX_TOKENS_FOR_ANSWER,
+            max_tokens = self.model.max_tokens_for_answer,
             max_characters = TELEGRAM_MAX_MESSAGE_LENGTH,
             doc_chunks=doc_chunks
         )
@@ -189,8 +197,9 @@ class WorkerOpenAI:
         messages = self.add_previous_messages(messages, history_items)
 
         # TODO: добавить вторую более дешевую модель. Выбирать модель в зависимости от объема передаваемого user_prompt
+        logger.info(f'Иcпользуем модель: {self.model.name}')
         completion = await self.client.chat.completions.create(
-            model=self.model,
+            model=self.model.name,
             messages=messages,
             temperature=TEMPERATURE
         )
@@ -200,7 +209,9 @@ class WorkerOpenAI:
         #print('===========================================: \n')
         #print('Ответ ChatGPT: ')
         #print(completion.choices[0].message.content)
-        return completion, messages, docs
+        cost_request = self.model.input_price*(completion["usage"]["prompt_tokens"]/1000) + self.model.output_price*(completion["usage"]["completion_tokens"]/1000)
+        logger.info('ЦЕНА запроса с ответом :',  cost_request, ' $')
+        return completion, messages, docs, cost_request
     
     def add_previous_messages(self, messages: List[Dict[str, str]], history_items: List[History]) -> List:
         new_messages = []
@@ -214,7 +225,7 @@ class WorkerOpenAI:
         new_messages.append(messages[1])
 
         num_tokens = self.num_tokens_from_messages(new_messages)
-        while num_tokens > MAX_TOKENS_FOR_REQUEST and len(new_messages) > 2:
+        while num_tokens > self.model.max_tokens_for_request and len(new_messages) > 2:
             del new_messages[1:3]
             num_tokens = self.num_tokens_from_messages(new_messages)
 

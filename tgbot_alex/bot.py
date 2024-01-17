@@ -9,20 +9,9 @@ from handlers import user_handler, admin_handler
 from create_bot import dp, bot
 from dbase.database import init_db, create_db
 
-#logger = logging.getLogger(__name__)      # старый логгер
 
-# # Запускаем логирование
-# logger = Logger(enable_notifications=False)
+# Запускаем логирование
 logger.info("Start bot")
-
-
-#Настройка логирования в stdout
-# logging.basicConfig(
-#     level=logging.INFO,
-#     format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-#     # filename="bot_log.log",
-#     # filemode='a',
-# )
 
 
 async def on_startup(_):

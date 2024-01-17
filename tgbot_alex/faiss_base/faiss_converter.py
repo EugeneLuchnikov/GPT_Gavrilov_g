@@ -21,7 +21,8 @@ faiss_db_dir = os.path.join(ROOT_DIR, FAISS_DB_DIR)  # полный путь д�
 
 
 def get_file_name(file_path):
-    """Получение имени файла без расширения
+    """
+    Получение имени файла без расширения
     """
     file_name = os.path.splitext(os.path.basename(file_path))[0]
     return file_name
@@ -49,11 +50,12 @@ def num_tokens_from_string(string: str):
 def create_faiss_indexes(path=txt_db_dir):
     all_txt_files = get_files()
     print(f'create_faiss_indexes: Проверим файлы в директории "{TXT_DB_DIR}": \n {all_txt_files}')
-
+    
+    # создадим Сплиттер для разбиения на чанки:
     text_splitter = RecursiveCharacterTextSplitter(
         separators=["##_", "\n\n", "\n", " ", ""],
         chunk_size=1024,
-        length_function=lambda x: num_tokens_from_string(x))  # создали Сплиттер для разбиения на чанки
+        length_function=lambda x: num_tokens_from_string(x))
     
     embeddings = OpenAIEmbeddings()  # по умолчанию использует самую дешевую модель 'text-embedding-ada-002'
 

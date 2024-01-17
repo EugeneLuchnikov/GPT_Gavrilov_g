@@ -8,6 +8,7 @@ import gspread
 import pygsheets
 from create_bot import GSERVICEACCOUNTFILE, SHEETID_PARAM
 from logger.logger import logger
+from config import LOGGING_SERVICE
 
 # Google Sheets setup
 google_drive = None
@@ -125,18 +126,18 @@ def get_report():
     ]
 
     columns_history = [
-        'user_id', 'score_name', 'score_text', 'score', 'score_chunck', 'num_token', 'score_time', 'time_duration'
+        'user_id', 'score_name', 'score_text', 'score', 'score_chunck', 'num_token', 'cost_request', 'score_time', 'time_duration'
     ]
 
     sheet_name = ['Пользователи', 'Оценки']
     sheet_col_width = [
-        {'A:A': 12, 'B:B': 20, 'C:C': 20, 'D:D': 20, 'E:E': 30, 'F:F': 20, 'G:G': 20},
-        {'A:A': 20, 'B:B': 14, 'C:C': 80, 'D:D': 12, 'E:E': 20, 'F:F': 20, 'G:G': 20}
+        {'A:A': 12, 'B:B': 20, 'C:C': 20, 'D:D': 20, 'E:E': 30, 'F:F': 20, 'G:G': 20, 'I:I': 20},
+        {'A:A': 20, 'B:B': 14, 'C:C': 80, 'D:D': 12, 'E:E': 20, 'F:F': 20, 'G:G': 20, 'I:I': 20}
         ]
 
     df_users = get_df_users()[columns_users]
     df_score = get_df_history()[columns_history]
-    name_report = f'report_Bot_Agent5_01_{datetime.utcnow().strftime("%d.%m.%Y_%H.%M.%S")}.xlsx'
+    name_report = f'report_{LOGGING_SERVICE}_{datetime.utcnow().strftime("%d.%m.%Y_%H.%M.%S")}.xlsx'
     with pd.ExcelWriter(name_report) as writer:
         workbook = writer.book
         df_users.to_excel(writer, sheet_name=sheet_name[0], index=False)

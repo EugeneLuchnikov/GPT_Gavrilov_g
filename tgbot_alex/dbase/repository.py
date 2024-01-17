@@ -110,7 +110,8 @@ async def update_dialog_state_and_score(tg_user_id: int, dialog_state: str, dial
 async def update_dialog_statistics(
         tg_user_id: int, last_dialog: str, last_question: str,
         last_answer: str, last_chunks: str, last_num_token: int,
-        dialog_state: str, last_time_duration: float, num_queries: int) -> None:
+        last_cost: float, dialog_state: str, 
+        last_time_duration: float, num_queries: int) -> None:
     """
     Обновляет статистику диалога пользователя.
 
@@ -126,10 +127,15 @@ async def update_dialog_statistics(
     """
     async with await connect_db() as session:
         stmt = update(User).where(User.tg_id == tg_user_id).values(
-            last_dialog=last_dialog, last_question=last_question,
-            last_answer=last_answer, last_chunks=last_chunks,
-            last_num_token=last_num_token, dialog_state=dialog_state,
-            last_time_duration=last_time_duration, num_queries=num_queries)
+            last_dialog=last_dialog, 
+            last_question=last_question,
+            last_answer=last_answer, 
+            last_chunks=last_chunks,
+            last_num_token=last_num_token, 
+            last_cost=last_cost, 
+            dialog_state=dialog_state, 
+            last_time_duration=last_time_duration, 
+            num_queries=num_queries)
         await session.execute(stmt)
         await session.commit()
 

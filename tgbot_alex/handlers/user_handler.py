@@ -47,6 +47,7 @@ async def cmd_start(message: types.Message):
             None,
             None,
             None,
+            None,
             "finish",
             None,
             None,
@@ -85,8 +86,7 @@ async def send_recommendations(message: types.Message):
     This handler will be called when user sends `/recommendations` command
     """
     recommendations_student = '''
-    Я - полезный помощник, на основе ChatGPT.
-    Профессионал в области Техподдержки Компании Агент5.
+    Я - полезный помощник Германа Гаврилова основе ChatGPT.
     Советую прочитать полностью прежде чем начать общаться со мной.
 
     1. Сложные вопросы я рекомендую задавать мне на английском языке, так же на английском языке я работаю быстрее.
@@ -114,7 +114,8 @@ async def send_recommendations(message: types.Message):
     9. Будьте терпеливы: я являюсь языковой моделью искусственного интеллекта, и мне может понадобиться некоторое 
     время, чтобы обработать ваш запрос. Ответы на некоторые вопросы могут длиться до 2 минут. 
 
-    Готов общаться в чате.
+    Готов общаться в чате. 
+    И скажите Герману, что я уже работаю.
     '''
 
     await message.reply(recommendations_student, parse_mode='HTML')
@@ -214,6 +215,7 @@ async def process_callback_qrating(callback_query: types.CallbackQuery):
             user.last_chunks,
             rating,
             user.last_num_token,
+            user.last_cost,
             user.last_question_time,
             user.last_time_duration,
             datetime.utcnow()
@@ -248,7 +250,7 @@ async def generate_answer(message: types.Message):
             time1 = datetime.utcnow()
             await update_last_question_time(message.from_user.id, time1)
             logger.info(f"Запрос пошел: {message.text}")
-            completion, dialog, chunks = await main_chatgpt.WorkerOpenAI().get_chatgpt_answer(message.text, history_items)
+            completion, dialog, chunks, cost_request = await main_chatgpt.WorkerOpenAI().get_chatgpt_answer(message.text, history_items)
             #logger.info(f"Запрос вернулся: {completion}")
             logger.info(f"Запрос вернулся: [completion]")
             #content_to_print = dialog[1]['content']
@@ -257,14 +259,13 @@ async def generate_answer(message: types.Message):
             time2 = datetime.utcnow()
             duration = time2 - time1
             await msg.edit_text(completion.choices[0].message.content)
-            #logger.info(f"ЦЕНА запроса: {0.0002 * (completion['usage']['total_tokens'] / 1000)}$\n {completion['usage']}")
-            logger.info(f"ЦЕНА запроса: {0.004 * (completion.usage.total_tokens / 1000)}$")
+            logger.info(f"ЦЕНА запроса: {cost_request}$")
             
             last_chunks = '\n '.join([f'\n==  ' + doc.page_content + '\n' for doc in chunks])
 
             await update_dialog_statistics(
                 message.from_user.id, json.dumps(dialog), message.text, completion.choices[0].message.content,
-                last_chunks, completion.usage.total_tokens, 'close', duration.total_seconds(), num_queries + 1
+                last_chunks, completion.usage.total_tokens, cost_request, 'close', duration.total_seconds(), num_queries + 1
             )
 
             await message.answer("Пожалуйста, оцените качество консультации от -2 до 2:",
