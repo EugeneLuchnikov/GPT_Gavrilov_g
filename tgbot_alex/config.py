@@ -30,13 +30,6 @@ exp_model = GptModel(name='gpt-4-1106-preview',
 # Используемая модель
 MODEL = cheap_model
 
-# Максимальное количество токенов модели
-#MAX_TOKEN_LIMIT = 16385
-# Зарезервированное количество токенов для ответа
-#MAX_TOKENS_FOR_ANSWER = 2048
-# Максимальное количество токенов для запроса к ChatGPT с учетом резерва для ответа
-#MAX_TOKENS_FOR_REQUEST = MAX_TOKEN_LIMIT - MAX_TOKENS_FOR_ANSWER
-
 # Максимальная длительность диалога в часах
 MAX_DIALOG_PERIOD_IN_HOURS = 24
 # Температура 
