@@ -250,15 +250,10 @@ async def generate_answer(message: types.Message):
             await update_last_question_time(message.from_user.id, time1)
             logger.info(f"Запрос пошел: {message.text}")
             completion, dialog, chunks, cost_request = await main_chatgpt.WorkerOpenAI().get_chatgpt_answer(message.text, history_items)
-            #logger.info(f"Запрос вернулся: {completion}")
             logger.info(f"Запрос вернулся: [completion]")
-            #content_to_print = dialog[1]['content']
-            #print(f'user_handler: generate_answer: {content_to_print = }')
-            #print(f'user_handler: generate_answer: {chunks = }')
             time2 = datetime.utcnow()
             duration = time2 - time1
             await msg.edit_text(completion.choices[0].message.content)
-            logger.info(f"ЦЕНА запроса: {cost_request}$")
             
             last_chunks = '\n '.join([f'\n==  ' + doc.page_content + '\n' for doc in chunks])
 

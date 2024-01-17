@@ -143,11 +143,13 @@ class WorkerOpenAI:
         if model in {
             "gpt-3.5-turbo-0613",
             "gpt-3.5-turbo-16k-0613",
+            "gpt-3.5-turbo-16k",
             "gpt-3.5-turbo-1106",
             "gpt-4-0314",
             "gpt-4-32k-0314",
             "gpt-4-0613",
             "gpt-4-32k-0613",
+            "gpt-4-1106-preview",
             }:
             tokens_per_message = 3
             tokens_per_name = 1
@@ -204,13 +206,16 @@ class WorkerOpenAI:
             temperature=TEMPERATURE
         )
 
-        #print(f'{completion["usage"]["total_tokens"]} токенов использовано всего (вопрос-ответ).')
+        #print(f'{completion.usage.completion_tokens =}')
         #print('ЦЕНА запроса с ответом :', 0.004*(completion.usage.total_tokens/1000), ' $')
         #print('===========================================: \n')
         #print('Ответ ChatGPT: ')
         #print(completion.choices[0].message.content)
-        cost_request = self.model.input_price*(completion["usage"]["prompt_tokens"]/1000) + self.model.output_price*(completion["usage"]["completion_tokens"]/1000)
-        logger.info('ЦЕНА запроса с ответом :',  cost_request, ' $')
+        #cost_request = 0.02020202
+        cost_request = self.model.input_price*(completion.usage.prompt_tokens/1000) + self.model.output_price*(completion.usage.completion_tokens/1000)
+
+
+        logger.info(f'ЦЕНА запроса с ответом :  {cost_request}$')
         return completion, messages, docs, cost_request
     
     def add_previous_messages(self, messages: List[Dict[str, str]], history_items: List[History]) -> List:
