@@ -4,7 +4,7 @@ import pandas as pd
 from sqlalchemy import select, update
 from config import MAX_DIALOG_PERIOD_IN_HOURS
 from dbase.database import connect_db
-from dbase.models import User, History
+from dbase.models import Base, User, History
 
 
 async def add_user(user: User) -> None:
@@ -13,9 +13,7 @@ async def add_user(user: User) -> None:
 
     :param user: Объект пользователя, который будет добавлен в базу данных.
     """
-    async with await connect_db() as session:
-        session.add(user)
-        await session.commit()
+    await add_base(user)
 
 async def add_history(history: History) -> None:
     """
@@ -23,8 +21,16 @@ async def add_history(history: History) -> None:
 
     :param history: Объект истории, который будет добавлен в базу данных.
     """
+    await add_base(history)
+
+async def add_base(base: Base) -> None:
+    """
+    Добавляет новый объект в базу данных.
+
+    :param base: Объект, который будет добавлен в базу данных.
+    """
     async with await connect_db() as session:
-        session.add(history)
+        session.add(base)
         await session.commit()
 
 async def user_exists(tg_user_id: int) -> bool:

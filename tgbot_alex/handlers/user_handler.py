@@ -36,23 +36,23 @@ welcome_message = "<b>Добро пожаловать!</b> 🙌🏻 \n\nЯ - п�
 async def cmd_start(message: types.Message):
     if not await user_exists(message.from_user.id):
         user = User(
-            message.from_user.id,
-            None,
-            message.from_user.first_name,
-            message.from_user.last_name,
-            message.from_user.username,
-            datetime.utcnow(),
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            "finish",
-            None,
-            None,
-            None,
-            0
+            tg_id = message.from_user.id,
+            e_mail = None,
+            first_name = message.from_user.first_name,
+            last_name = message.from_user.last_name,
+            username = message.from_user.username,
+            last_interaction = datetime.utcnow(),
+            last_dialog = None,
+            last_question = None,
+            last_answer = None,
+            last_chunks = None,
+            last_num_token = None,
+            last_cost = None,
+            dialog_state = "finish",
+            dialog_score = None,
+            last_question_time = None,
+            last_time_duration = None,
+            num_queries = 0
         )
         await add_user(user)
         try:
@@ -206,18 +206,18 @@ async def process_callback_qrating(callback_query: types.CallbackQuery):
         user_id = await get_user_id(callback_query.from_user.id)
         # Запись истории
         history = History(
-            user_id,
-            user.last_question,
-            user.last_answer,
-            "question",
-            "\n".join([f'Пользователь: {user.last_question}', f'Ассистент: {user.last_answer}']),
-            user.last_chunks,
-            rating,
-            user.last_num_token,
-            user.last_cost,
-            user.last_question_time,
-            user.last_time_duration,
-            datetime.utcnow()
+            user_id = user_id,
+            question = user.last_question,
+            answer = user.last_answer,
+            score_name = "question",
+            score_text = "\n".join([f'Пользователь: {user.last_question}', f'Ассистент: {user.last_answer}']),
+            score_chunk = user.last_chunks,
+            score = rating,
+            num_token = user.last_num_token,
+            cost = user.last_cost,
+            question_time = user.last_question_time,
+            time_duration = user.last_time_duration,
+            score_time = datetime.utcnow()
         )
 
         # переда записью истории проверим содержимое history_data:

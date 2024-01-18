@@ -72,7 +72,7 @@ class History(Base):
     score_time = Column(DateTime, nullable=False)
 
     def __init__(self, user_id: int, question: str = None, answer: str = None, score_name: str = None, score_text: str = None, 
-                 score_chunk: str = None, score: int = None, num_token: int = None, cost_request: float = 0.0, 
+                 score_chunk: str = None, score: int = None, num_token: int = None, cost: float = 0.0, 
                  question_time: Optional[datetime] = None, time_duration: float = None, score_time: Optional[datetime] = None) -> None:
         
         self.user_id = user_id
@@ -83,7 +83,7 @@ class History(Base):
         self.score_chunk = score_chunk
         self.score = score
         self.num_token = num_token
-        self.cost = cost_request
+        self.cost = cost
         self.question_time = question_time
         self.time_duration = time_duration
         self.score_time = score_time
