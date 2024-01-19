@@ -34,7 +34,7 @@ MODEL = cheap_model
 # Максимальная длительность диалога в часах
 MAX_DIALOG_PERIOD_IN_HOURS = 24
 # Температура 
-TEMPERATURE = 0.01
+TEMPERATURE = 0.0
 
 # Максимальная длина сообщения в Telegram
 TELEGRAM_MAX_MESSAGE_LENGTH = 4096
