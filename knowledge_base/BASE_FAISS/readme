@@ -1,1 +1,31 @@
+Папка содержит все Базы знаний в векторе
+Данные из телеграм постов акутальны на 20.01.2024
+Данные из блога сайта Platrum акутальны на 19.01.2024
 
+Основные БЗ:
+=====
+faiss_db_db_data_from_all_data_txt
+ЭТА БЗ содежит все объединенные БЗ
+=====
+faiss_db_data_from_txt_telegram_channel
+https://docs.google.com/document/d/1u01H0WKjgYDJV2-JtLm_Kgd-1hGRKTOhwCv935IFcsk
+Эта БЗ сождержит только посты телеграма
+
+
+=====
+faiss_db_data_from_txt_video_podcast_telegram
+https://docs.google.com/document/d/1oBYFj46MHr8qZQWKiyWsX8tO-5Wnw33Rxf2nweBp0dc
+=====
+faiss_db_db_data_from_txt_platrum
+https://docs.google.com/document/d/1HK1Xigbn8iGssiMeoCUhTEDjADgdpQa82LNfsSuTmvQ
+https://docs.google.com/document/d/1Cqb2THSAKCYZKGClf3OopAvhXERGZTg_VCdBQM_dgn8
+=====
+faiss_db_data_from_txt_youtobe
+https://docs.google.com/document/d/1Ri73WrvpAwBJO-voriz6tG-7xitcLQBwke8pAC8X3H0
+=====
+faiss_db_data_from_txt_video_training_marathon
+https://docs.google.com/document/d/1m9VuLY8Sua1JRqcHh4dzEERmrbuaQw4DEDGZa5YA6K0
+=====
+faiss_db_data_from_txt_video_telegram
+https://docs.google.com/document/d/1WJe4VlYsk-AiXqBY71xunSRU6Mdlbmb7YEq9Rl10Z7U
+=====
