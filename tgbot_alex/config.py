@@ -35,14 +35,21 @@ MODEL = cheap_model
 MAX_DIALOG_PERIOD_IN_HOURS = 24
 # Температура 
 TEMPERATURE = 0.0
+# Количество чанков
+NUMBER_OF_CHUNKS = 8
 
 # Максимальная длина сообщения в Telegram
 TELEGRAM_MAX_MESSAGE_LENGTH = 4096
 
 # Промпты
-SYSTEM_PROMPT_FILE = 'system_prompt.txt'
-USER_PROMPT_FILE = 'user_prompt.txt'
-CHUNKS_PROMPT_FILE = 'chunks_prompt.txt'
+DIALOG1_SYSTEM_FILE = 'dialog1_system.txt'
+DIALOG1_USER_FILE = 'dialog1_user.txt'
+DIALOG2_SYSTEM_FILE = 'dialog2_system.txt'
+DIALOG2_USER_FILE = 'dialog2_user.txt'
+DIALOG3_SYSTEM_FILE = 'dialog3_system.txt'
+DIALOG3_USER_FILE = 'dialog3_user.txt'
+DIALOG3_SUM_SYSTEM_FILE = 'dialog3_sum_system.txt'
+DIALOG3_SUM_USER_FILE = 'dialog3_sum_user.txt'
 
 # папки и пути
 ROOT_DIR = os.path.abspath(os.path.dirname(__file__))   # Корневой каталог
@@ -66,6 +73,7 @@ DB_TYPE = 'POSTGRE'
 class DialogAlgorithm(Enum):
     SEPARATE_MESSAGES = 1 # все реплики передаются в отдельные сообщения user/assistant
     SINGLE_MESSAGE = 2 # все реплики передаются в одно сообщение user
+    SUMMARIZATION = 3 # все реплики саммаризируются перед подачей в user
 
 # Текущий алгоритм поддержки диалога
 DIALOG_ALGORITHM = DialogAlgorithm.SINGLE_MESSAGE

@@ -9,8 +9,8 @@ from langchain_community.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders import TextLoader
-from create_bot import OPENAI_API_KEY, FAISS_DB_DIR
-from config import TXT_DB_DIR, ROOT_DIR
+from create_bot import OPENAI_API_KEY
+from config import TXT_DB_DIR, ROOT_DIR, FAISS_DB_DIR
 import tiktoken
 
 
@@ -86,6 +86,7 @@ def read_faiss_indexes(indexes):
     :param path: локальный путь в проекте до папки с индексами
     :return: база индексов
     """
+    db: FAISS = None
     db_path = os.path.join(ROOT_DIR, FAISS_DB_DIR)
     flag = True     # Признак первой базы для чтения. Остальные базы будем добавлять к имеющейся
     # Перебор всех курсов в списке courses:
