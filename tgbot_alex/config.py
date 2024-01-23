@@ -77,3 +77,7 @@ class DialogAlgorithm(Enum):
 
 # Текущий алгоритм поддержки диалога
 DIALOG_ALGORITHM = DialogAlgorithm.SINGLE_MESSAGE
+
+# Проверка бесплатных вопросов пользователя
+NUMBER_FREE_QUESTIONS = 10
+UNLIM_QUESTION = True

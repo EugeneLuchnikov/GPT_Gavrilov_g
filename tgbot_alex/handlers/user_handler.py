@@ -18,12 +18,13 @@ from dbase.repository import add_user, add_history, user_exists, get_user, get_u
 from keyboards.user_keyboard import drating_inline_buttons_keyboard
 from bot import logger
 from handlers.admin_handler import ADMIN_CHAT_ID
+from config import NUMBER_FREE_QUESTIONS, UNLIM_QUESTION
 
 router = Router()  # [2]
 
 welcome_message = "<b>Добро пожаловать!</b> 🙌🏻 \n\nЯ - полезный помощник, на основе ChatGPT.\nНейроконсультант " \
                   "Германа Гаврилова.\nЯ работаю в демонстрационном режиме " \
-                  "поэтому у вас есть 10 запросов ко мне.\nСоветую прочитать рекомендации " \
+                  f"поэтому у вас есть {NUMBER_FREE_QUESTIONS} запросов ко мне.\nСоветую прочитать рекомендации " \
                   "прежде чем начать общаться со мной ➡️ /recommendations.\n\n " \
                   "Мы подготовили несколько примеров вопросов, которые можно задать боту (просто нажми на команду с " \
                   "нужным вопросом):\n" \
@@ -189,13 +190,13 @@ async def process_callback_qrating(callback_query: types.CallbackQuery):
         rating = int(callback_query.data[6:])
         #print(f'process_callback_qrating: {type(rating)}, {rating = }')
         #await bot.answer_callback_query(callback_query.id, text=f"Спасибо за вашу оценку: {rating}!", show_alert=True)
-        if callback_query.from_user.id in ADMIN_CHAT_ID:
+        if UNLIM_QUESTION or callback_query.from_user.id in ADMIN_CHAT_ID:
             await bot.send_message(callback_query.from_user.id, f"Спасибо за вашу оценку: {rating}! Можете задать "
                                                                 f"следующий вопрос")
         else:
             await bot.send_message(callback_query.from_user.id, f"Спасибо за вашу оценку: {rating}! Можете задать "
                                                                 f"следующий вопрос (осталось "
-                                                                f"{int(10 - (await get_num_queries(callback_query.from_user.id)))} запрос(ов).")
+                                                                f"{int(NUMBER_FREE_QUESTIONS - (await get_num_queries(callback_query.from_user.id)))} запрос(ов).")
         # Здесь сохраняется оценка пользователя для дальнейшего анализа или использования
         await update_dialog_state_and_score(callback_query.from_user.id, 'finish', rating)
 
@@ -240,8 +241,8 @@ async def generate_answer(message: types.Message):
     #print(f'generate_answer: starting...')
     await update_last_interaction(message.from_user.id, datetime.utcnow())
     num_queries = await get_num_queries(message.from_user.id)
-    #print(f'generate_answer: {num_queries = }')
-    if num_queries < 10 or message.from_user.id in ADMIN_CHAT_ID:       # ограничение по ответам: менее 10 ответов или админ - неограничено
+    print(f'generate_answer: {UNLIM_QUESTION = } {num_queries = }')
+    if UNLIM_QUESTION or num_queries < NUMBER_FREE_QUESTIONS or message.from_user.id in ADMIN_CHAT_ID:       # ограничение по ответам: менее NUMBER_FREE_QUESTIONS ответов или админ - неограничено
         try:
             msg = await message.answer("Идет подготовка ответа. Ждите...⏳")  # msg["message_id"]
             user_id = await get_user_id(message.from_user.id)
@@ -270,7 +271,7 @@ async def generate_answer(message: types.Message):
             await bot.send_message(message.from_user.id, f"ОШИБКА: {error}")
             await bot.send_message(message.from_user.id, "Модель в настоящее время перегружена. Попробуйте позже.")
     else:
-        await bot.send_message(message.from_user.id, "Вы исчерпали всё количество запросов (10) демонстрационного "
+        await bot.send_message(message.from_user.id, f"Вы исчерпали всё количество запросов ({NUMBER_FREE_QUESTIONS}) демонстрационного "
                                                      "режима.\nСпасибо что воспользовались нашим Помощником! 🤝")
 
 
